@@ -3,17 +3,25 @@ from databases import Database
 from uuid import UUID
 
 from app.models.recipe import Recipe, RecipeAddVM, RecipeUpdateVM
-from app.utils import build_insert_stmts, build_update_stmt
+from app.data.utils import build_insert_stmts, build_update_stmt, map_dict
 
 
 class RecipeData:
+    json_fields = ['ingredients', 'instructions', 'tags']
+
     def __init__(self, db: Database) -> None:
         self.db = db
 
-    def _map_record_to_model(record: Mapping[Any, Any]) -> Optional[Recipe]:
+    def _map_record_to_model(self, record: Mapping[Any, Any]) -> Optional[Recipe]:
         if not record:
             return None
-        return Recipe(**record.dict())
+
+        mapped_dict = map_dict(
+            to_be_mapped=dict(record),
+            key_map={},
+            json_fields=self.json_fields
+        )
+        return Recipe(**mapped_dict)
 
     async def get_list(self):
         query = "SELECT * FROM recipes"

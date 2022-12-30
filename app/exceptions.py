@@ -1,0 +1,22 @@
+from typing import Optional, Dict, Any
+
+
+class BaseException(Exception):
+    def __init__(self, message: Optional[str] = None, tags: Optional[Dict[str, Any]] = None, extras: Optional[Dict[str, Any]] = None) -> None:
+        self.message = message
+        self.tags = tags or {}
+        self.extras = extras or {}
+        super().__init__(message)
+
+
+class NotFoundError(BaseException):
+    def __init__(self, resource_type: str, resource_id: str) -> None:
+        message = f"Type '{resource_type.title()}' with an id value of '{resource_id}' could not be found."
+        tags = {
+            'type': type(self).__name__
+        }
+        extras = {
+            'type': resource_type,
+            'id': resource_id
+        }
+        super().__init__(message, tags, extras)

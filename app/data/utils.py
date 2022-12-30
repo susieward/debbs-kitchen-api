@@ -1,7 +1,8 @@
+import json
 from copy import deepcopy
-from typing import Dict, Any
+from typing import Dict, Any, Sequence, Optional
 
-def map_dictionary(to_be_mapped: Dict[str, Any], key_map: Dict[str, str], reverse: bool = False) -> Dict[str, Any]:
+def map_dict(to_be_mapped: Dict[str, Any], key_map: Dict[str, str], json_fields: Optional[Sequence[str]] = None, reverse: bool = False) -> Dict[str, Any]:
     mapped_dict = deepcopy(to_be_mapped)
 
     for key, val in key_map.items():
@@ -9,6 +10,11 @@ def map_dictionary(to_be_mapped: Dict[str, Any], key_map: Dict[str, str], revers
             mapped_dict[key] = mapped_dict.pop(val)
         else:
             mapped_dict[val] = mapped_dict.pop(key)
+
+    if json_fields:
+        for field in json_fields:
+            value = mapped_dict[field]
+            mapped_dict[field] = json.loads(value)
 
     return mapped_dict
 

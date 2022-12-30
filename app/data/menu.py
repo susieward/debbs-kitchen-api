@@ -3,7 +3,7 @@ from databases import Database
 from uuid import UUID, uuid4
 
 from app.models.menu import Menu, MenuAddVM, MenuUpdateVM
-from app.utils import build_insert_stmts, build_update_stmt
+from app.data.utils import build_insert_stmts, build_update_stmt
 
 
 class MenuData:
@@ -13,7 +13,7 @@ class MenuData:
     def _map_record_to_model(record: Mapping[Any, Any]) -> Optional[Menu]:
         if not record:
             return None
-        return Menu(**record.dict())
+        return Menu(dict(record))
 
     async def get_list(self) -> Sequence[Menu]:
         query = "SELECT * FROM menus"

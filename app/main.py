@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 
-from app.api.routers import recipes
+from app.api.routers import recipes, menus, drafts
 from app.api.events import create_db, close_db
 
 from app.config import get_settings
@@ -19,8 +19,8 @@ def get_app():
     app.add_event_handler("shutdown", close_db(app))
 
     app.include_router(recipes.router, tags=["recipe"])
-    #app.include_router(menus.router, tags=["menu"])
-    #app.include_router(drafts.router, tags=["draft"])
+    app.include_router(menus.router, tags=["menu"])
+    app.include_router(drafts.router, tags=["draft"])
 
     return app
 

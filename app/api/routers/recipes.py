@@ -1,7 +1,7 @@
 from uuid import UUID
-import json
+from typing import Sequence
 
-from fastapi import APIRouter, Path, Body, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Path, Body, Depends, HTTPException
 from starlette import status
 
 from app.api.dependencies import recipe_logic_dep
@@ -12,7 +12,7 @@ from app.models.response import AddResponse, UpdateResponse, DeleteResponse
 
 router = APIRouter()
 
-@router.get('/recipes')
+@router.get('/recipes', response_model=Sequence[Recipe])
 async def get_recipes(recipe_logic: RecipeLogic = Depends(recipe_logic_dep)):
     try:
         return await recipe_logic.get_list()

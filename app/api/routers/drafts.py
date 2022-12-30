@@ -1,7 +1,8 @@
 from uuid import UUID
+from typing import Sequence
 import json
 
-from fastapi import APIRouter, Path, Body, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Path, Body, Depends, HTTPException
 from starlette import status
 
 from app.api.dependencies import draft_logic_dep
@@ -12,7 +13,7 @@ from app.models.response import AddResponse, UpdateResponse, DeleteResponse
 
 router = APIRouter()
 
-@router.get('/drafts')
+@router.get('/drafts', response_model=Sequence[Draft])
 async def get_drafts(draft_logic: DraftLogic = Depends(draft_logic_dep)):
     try:
         return await draft_logic.get_list()
