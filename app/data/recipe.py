@@ -67,7 +67,7 @@ class RecipeData:
 
     async def update(self, id: UUID, recipe: Recipe) -> int:
         mapped_dict = recipe.dict(exclude={'id', 'ingredients', 'instructions', 'tags'})
-        update_smt = build_update_stmt(mapped_dict=mapped_dict)
+        update_stmt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
         values['id'] = id
         for field in self.json_fields:
