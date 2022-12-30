@@ -7,13 +7,27 @@ from app.data.utils import build_insert_stmts, build_update_stmt
 
 
 class MenuData:
+    key_map = {
+        'date': 'menu_date',
+        'month': 'menu_month',
+        'year': 'menu_year'
+    }
+    json_fields = ['dishes']
+
     def __init__(self, db: Database) -> None:
         self.db = db
 
     def _map_record_to_model(record: Mapping[Any, Any]) -> Optional[Menu]:
         if not record:
             return None
-        return Menu(dict(record))
+
+        mapped_dict = map_dict(
+            to_be_mapped=dict(record),
+            key_map=self.key_map,
+            json_fields=self.json_fields,
+            reverse=True
+        )
+        return Menu(**mapped_dict)
 
     async def get_list(self) -> Sequence[Menu]:
         query = "SELECT * FROM menus"

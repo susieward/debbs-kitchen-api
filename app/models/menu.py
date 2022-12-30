@@ -3,9 +3,10 @@ from uuid import UUID
 from typing import Optional, Sequence, Any, Dict
 
 class BaseMenu(BaseModel):
-    name: str = Field(..., title='image title')
-    description: Optional[str] = Field(None, title='optional description')
-    file_id: UUID = Field(..., title='image file id')
+    date: int = Field(..., title='menu date')
+    month: str = Field(..., title='menu month')
+    year: str = Field(..., title='menu year')
+    dishes: Optional[Sequence[Dict[str, Any]]] = Field(None, title='dishes array')
 
 class MenuAddVM(BaseMenu):
     pass
