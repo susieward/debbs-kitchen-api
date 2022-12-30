@@ -1,6 +1,7 @@
 from typing import Optional, Sequence, Dict, Any, Mapping
 from databases import Database
 from uuid import UUID
+import json
 
 from app.models.recipe import Recipe, RecipeAddVM, RecipeUpdateVM
 from app.data.utils import build_insert_stmts, build_update_stmt, map_dict
@@ -65,10 +66,14 @@ class RecipeData:
         )
 
     async def update(self, id: UUID, recipe: Recipe) -> int:
-        mapped_dict = recipe.dict(exclude={'id'})
+        mapped_dict = recipe.dict(exclude={'id', 'ingredients', 'instructions', 'tags'})
         update_smt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
         values['id'] = id
+        for field in self.json_fields:
+            value = mapped_dict.get(field)
+            if value:
+                mapped_dict[field] = json.dumps(value)
 
         updated = await self.db.fetch_val(
             query=f'''
