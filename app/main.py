@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routers import recipes, menus, drafts
 from app.api.events import create_db, close_db
@@ -13,6 +14,13 @@ def get_app():
     app.state.config = config_settings
 
     app.add_middleware(GZipMiddleware, minimum_size=1000)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=config_settings.allowed_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     #app.mount("/static", StaticFiles(directory = "app/static"), name = "static")
 
     app.add_event_handler("startup", create_db(app))
