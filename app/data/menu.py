@@ -48,6 +48,10 @@ class MenuData:
         mapped_dict = menu.dict()
         values = mapped_dict
         fields_stmt, values_stmt = build_insert_stmts(mapped_dict=mapped_dict)
+        for field in self.json_fields:
+            value = mapped_dict.get(field)
+            if value is not None:
+                values[field] = json.dumps(value)
 
         return await self.db.execute(
             query=f"""
@@ -71,10 +75,18 @@ class MenuData:
         )
 
     async def update(self, id: UUID, menu: Menu) -> int:
-        mapped_dict = menu.dict(exclude={'id'})
+        mapped_dict = map_dict(
+            to_be_mapped=menu.dict(exclude={'id'}),
+            key_map=self.key_map,
+            json_fields=self.json_fields,
+        )
         update_smt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
         values['id'] = id
+        for field in self.json_fields:
+            value = mapped_dict.get(field)
+            if value is not None:
+                values[field] = json.dumps(value)
 
         updated = await self.db.fetch_val(
             query=f'''

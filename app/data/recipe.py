@@ -43,6 +43,10 @@ class RecipeData:
         mapped_dict = recipe.dict()
         values = mapped_dict
         fields_stmt, values_stmt = build_insert_stmts(mapped_dict=mapped_dict)
+        for field in self.json_fields:
+            value = mapped_dict.get(field)
+            if value is not None:
+                values[field] = json.dumps(value)
 
         return await self.db.execute(
             query=f"""
