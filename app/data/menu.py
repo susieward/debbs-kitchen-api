@@ -48,8 +48,7 @@ class MenuData:
     async def add(self, menu: Menu) -> UUID:
         mapped_dict = map_dict(
             to_be_mapped=menu.dict(),
-            key_map=self.key_map,
-            json_fields=self.json_fields
+            key_map=self.key_map
         )
         values = mapped_dict
         fields_stmt, values_stmt = build_insert_stmts(mapped_dict=mapped_dict)
