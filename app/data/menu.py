@@ -25,7 +25,8 @@ class MenuData:
         mapped_dict = map_dict(
             to_be_mapped=dict(record),
             key_map=self.key_map,
-            json_fields=self.json_fields
+            json_fields=self.json_fields,
+            reverse=True
         )
         return Menu(**mapped_dict)
 
@@ -48,8 +49,7 @@ class MenuData:
         mapped_dict = map_dict(
             to_be_mapped=menu.dict(),
             key_map=self.key_map,
-            json_fields=self.json_fields,
-            reverse=True
+            json_fields=self.json_fields
         )
         values = mapped_dict
         fields_stmt, values_stmt = build_insert_stmts(mapped_dict=mapped_dict)
@@ -83,8 +83,7 @@ class MenuData:
         mapped_dict = map_dict(
             to_be_mapped=menu.dict(exclude={'id'}),
             key_map=self.key_map,
-            json_fields=self.json_fields,
-            reverse=True
+            json_fields=self.json_fields
         )
         update_smt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
