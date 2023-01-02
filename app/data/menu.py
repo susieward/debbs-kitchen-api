@@ -18,7 +18,7 @@ class MenuData:
     def __init__(self, db: Database) -> None:
         self.db = db
 
-    def _map_record_to_model(record: Mapping[Any, Any]) -> Optional[Menu]:
+    def _map_record_to_model(self, record: Mapping[Any, Any]) -> Optional[Menu]:
         if not record:
             return None
 
