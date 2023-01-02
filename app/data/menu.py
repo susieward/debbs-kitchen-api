@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 import json
 
 from app.models.menu import Menu, MenuAddVM, MenuUpdateVM
-from app.data.utils import build_insert_stmts, build_update_stmt
+from app.data.utils import build_insert_stmts, build_update_stmt, map_dict
 
 
 class MenuData:
