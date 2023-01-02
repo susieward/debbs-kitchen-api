@@ -25,8 +25,7 @@ class MenuData:
         mapped_dict = map_dict(
             to_be_mapped=dict(record),
             key_map=self.key_map,
-            json_fields=self.json_fields,
-            reverse=True
+            json_fields=self.json_fields
         )
         return Menu(**mapped_dict)
 
@@ -46,7 +45,12 @@ class MenuData:
         return self._map_record_to_model(record=record)
 
     async def add(self, menu: Menu) -> UUID:
-        mapped_dict = menu.dict()
+        mapped_dict = map_dict(
+            to_be_mapped=menu.dict(),
+            key_map=self.key_map,
+            json_fields=self.json_fields,
+            reverse=True
+        )
         values = mapped_dict
         fields_stmt, values_stmt = build_insert_stmts(mapped_dict=mapped_dict)
         for field in self.json_fields:
@@ -80,6 +84,7 @@ class MenuData:
             to_be_mapped=menu.dict(exclude={'id'}),
             key_map=self.key_map,
             json_fields=self.json_fields,
+            reverse=True
         )
         update_smt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
