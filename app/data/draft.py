@@ -65,7 +65,7 @@ class DraftData:
 
     async def update(self, id: UUID, draft: Draft) -> int:
         mapped_dict = draft.dict(exclude={'id'})
-        update_smt = build_update_stmt(mapped_dict=mapped_dict)
+        update_stmt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
         values['id'] = id
 

@@ -83,7 +83,7 @@ class MenuData:
             to_be_mapped=menu.dict(exclude={'id'}),
             key_map=self.key_map
         )
-        update_smt = build_update_stmt(mapped_dict=mapped_dict)
+        update_stmt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
         values['id'] = id
         for field in self.json_fields:
