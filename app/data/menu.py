@@ -81,8 +81,7 @@ class MenuData:
     async def update(self, id: UUID, menu: Menu) -> int:
         mapped_dict = map_dict(
             to_be_mapped=menu.dict(exclude={'id'}),
-            key_map=self.key_map,
-            json_fields=self.json_fields
+            key_map=self.key_map
         )
         update_smt = build_update_stmt(mapped_dict=mapped_dict)
         values = mapped_dict
