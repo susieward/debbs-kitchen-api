@@ -1,19 +1,24 @@
-from typing import Optional, Sequence, Dict, Any, Mapping
+from typing import Optional, Sequence, Dict, Any, Mapping, Union
 from databases import Database
 from uuid import UUID
 import json
+import asyncio
 
-from app.models.recipe import Recipe, RecipeAddVM, RecipeUpdateVM
+from app.models.recipe import Recipe, RecipeExpanded, RecipeAddVM, RecipeUpdateVM
+from app.data.instruction import InstructionData
+from app.data.ingredient import IngredientData
 from app.data.utils import build_insert_stmts, build_update_stmt, map_dict
 
 
 class RecipeData:
-    json_fields = ['ingredients', 'instructions', 'tags']
+    json_fields = ['tags']
 
-    def __init__(self, db: Database) -> None:
+    def __init__(self, db: Database, instruction_data: InstructionData, ingredient_data: IngredientData) -> None:
         self.db = db
+        self._instruction_data = instruction_data
+        self._ingredient_data = ingredient_data
 
-    def _map_record_to_model(self, record: Mapping[Any, Any]) -> Optional[Recipe]:
+    async def _map_record_to_model(self, record: Mapping[Any, Any], expanded: bool = False) -> Optional[Union[RecipeExpanded, Recipe]]:
         if not record:
             return None
 
@@ -22,14 +27,29 @@ class RecipeData:
             key_map={},
             json_fields=self.json_fields
         )
+
+        if expanded:
+            recipe_id = mapped_dict.get('id')
+            instructions, ingredients = await asyncio.gather(
+                self._instruction_data.get_recipe_instructions(recipe_id=recipe_id),
+                self._ingredient_data.get_recipe_ingredients(recipe_id=recipe_id)
+            )
+
+            return RecipeExpanded(
+                instructions=instructions,
+                ingredients=ingredients,
+                **mapped_dict
+            )
+
         return Recipe(**mapped_dict)
 
     async def get_list(self):
         query = "SELECT * FROM recipes"
         records = await self.db.fetch_all(query=query)
-        return [self._map_record_to_model(record=record) for record in records]
+        tasks = [self._map_record_to_model(record=record) for record in records]
+        return await asyncio.gather(*tasks)
 
-    async def get(self, id: UUID) -> Optional[Recipe]:
+    async def get(self, id: UUID, expanded: bool = True) -> Optional[Union[Recipe, RecipeExpanded]]:
         record = await self.db.fetch_one(
             query="""
                 SELECT * FROM recipes
@@ -37,7 +57,7 @@ class RecipeData:
             """,
             values={'id': id}
         )
-        return self._map_record_to_model(record=record)
+        return await self._map_record_to_model(record=record, expanded=expanded)
 
     async def add(self, recipe: Recipe) -> UUID:
         mapped_dict = recipe.dict()

@@ -2,7 +2,7 @@ from typing import Optional, Sequence, Dict, Any, Mapping
 from uuid import UUID, uuid4
 
 from app.data.menu import MenuData
-from app.exceptions import NotFoundError
+from app.api.exceptions import NotFoundError
 from app.models.menu import Menu, MenuAddVM, MenuUpdateVM
 
 
@@ -19,6 +19,9 @@ class MenuLogic:
             raise NotFoundError(resource_type=Menu.__name__, resource_id=id)
 
         return menu
+
+    async def get_by_year_month(self, year: Optional[str] = None, month: Optional[str] = None) -> Sequence[Menu]:
+        return await self._menu_data.get_by_year_month(year=year, month=month)
 
     async def add(self, menu_vm: MenuAddVM) -> UUID:
         menu = Menu(id=uuid4(), **menu_vm.dict())

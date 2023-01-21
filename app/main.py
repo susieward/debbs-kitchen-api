@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routers import recipes, menus, drafts
+from app.api.routers import recipes, menus, drafts, instructions, ingredients
 from app.api.events import create_db, close_db
 
 from app.config import get_settings
@@ -29,6 +29,8 @@ def get_app():
     app.include_router(recipes.router, tags=["recipe"])
     app.include_router(menus.router, tags=["menu"])
     app.include_router(drafts.router, tags=["draft"])
+    app.include_router(instructions.router, tags=["instruction"])
+    app.include_router(ingredients.router, tags=["ingredients"])
 
     return app
 

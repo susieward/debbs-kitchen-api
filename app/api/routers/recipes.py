@@ -1,12 +1,12 @@
 from uuid import UUID
-from typing import Sequence
+from typing import Sequence, Union
 
 from fastapi import APIRouter, Path, Body, Depends, HTTPException
 from starlette import status
 
 from app.api.dependencies import recipe_logic_dep
 from app.logic.recipe import RecipeLogic
-from app.models.recipe import Recipe, RecipeAddVM, RecipeUpdateVM
+from app.models.recipe import Recipe, RecipeExpanded, RecipeAddVM, RecipeUpdateVM
 
 from app.models.response import AddResponse, UpdateResponse, DeleteResponse
 
@@ -22,7 +22,7 @@ async def get_recipes(recipe_logic: RecipeLogic = Depends(recipe_logic_dep)):
         raise HTTPException(status_code=500, detail = msg)
 
 
-@router.get('/recipe/{id}', response_model=Recipe)
+@router.get('/recipe/{id}', response_model=RecipeExpanded)
 async def get_recipe(
     recipe_logic: RecipeLogic = Depends(recipe_logic_dep),
     id: UUID = Path(...)

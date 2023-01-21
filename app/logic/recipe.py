@@ -2,7 +2,7 @@ from typing import Optional, Sequence, Dict, Any, Mapping
 from uuid import UUID, uuid4
 
 from app.data.recipe import RecipeData
-from app.exceptions import NotFoundError
+from app.api.exceptions import NotFoundError
 from app.models.recipe import Recipe, RecipeAddVM, RecipeUpdateVM
 
 

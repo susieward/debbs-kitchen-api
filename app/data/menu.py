@@ -45,6 +45,31 @@ class MenuData:
         )
         return self._map_record_to_model(record=record)
 
+    async def get_by_year_month(self, year: Optional[str] = None, month: Optional[str] = None) -> Optional[Menu]:
+        where_clause = ''
+        values_dict = {}
+
+        if year and not month:
+            where_clause += 'menu_year = :year'
+            values_dict['year'] = year
+
+        elif month and not year:
+            where_clause += 'menu_month = :month'
+            values_dict['month'] = month
+        else:
+            where_clause = "menu_year = :year AND menu_month = :month"
+            values_dict['year'] = year
+            values_dict['month'] = month
+
+        records = await self.db.fetch_all(
+            query=f"""
+                SELECT * FROM menus
+                WHERE {where_clause}
+            """,
+            values=values_dict
+        )
+        return [self._map_record_to_model(record=record) for record in records]
+
     async def add(self, menu: Menu) -> UUID:
         mapped_dict = map_dict(
             to_be_mapped=menu.dict(),
